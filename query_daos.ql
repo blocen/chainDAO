@@ -5,7 +5,9 @@ query daos {
     }
   )
     {
-    id
-    name
+      id
+      name
+      symbol
+      network
   }
 }

@@ -6,11 +6,15 @@ query Votes {
       #space_in: ["ens.eth", "carbinocapital.eth"]
     }
   ) {
-    id
+    #id
     #voter
     created
     choice
-    vp_state
+    #vp_state
+    proposal {
+      #id
+      title
+    }
     space {
       id
     }
