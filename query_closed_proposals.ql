@@ -3,9 +3,10 @@ query Proposals {
     first: 20,
     skip: 0,
     where: {
-      space_in: ["ens.eth", "carbinocapital.eth"],
+      space_in: ["bdudao.eth", "carbinocapital.eth"],
       #space_in: ["carbinocapital.eth"],
-      state: "" # todo: only closed/finished
+      state: "closed" # todo: only closed/finished
+      type_in: ["single-choice", "basic"]
     },
     orderBy: "created",
     orderDirection: desc
@@ -14,15 +15,10 @@ query Proposals {
     space {
       id
     }
+    type
+    space
     title
-    scores
-    #scores_state
-    #scores_total
-    #scores_updated
-    #scores_by_strategy
-    #body
     choices
-    #snapshot
-    #state
+    scores
   }
 }
