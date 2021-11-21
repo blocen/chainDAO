@@ -3,22 +3,27 @@ query Proposals {
     first: 20,
     skip: 0,
     where: {
-      space_in: ["bdudao.eth", "carbinocapital.eth"],
-      #space_in: ["carbinocapital.eth"],
-      state: "closed" # todo: only closed/finished
-      type_in: ["single-choice", "basic"]
+      # space_in: ["bdudao.eth", "carbinocapital.eth"],
+      # space_in: ["bdudao.eth"],
+      space_in: ["enabel.eth"],
+      # state: "closed" # todo: only closed/finished
+      # scores_state_in: ["final"]
     },
     orderBy: "created",
     orderDirection: desc
   ) {
-    id
-    space {
-      id
-    }
+    # id
+    # space {
+    #   id
+    # }
     type
-    space
     title
     choices
+    scores_total
+    scores_state
+    scores_updated
+    scores_by_strategy
+    votes
     scores
   }
 }
