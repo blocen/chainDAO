@@ -17,6 +17,7 @@ contract APIConsumer is ChainlinkClient {
 
     uint256 public volume;
 
+    address private _link = 0xa36085F69e2889c224210F603D836748e7dC0088;
     address private oracle;
     bytes32 private jobId;
     uint256 private fee;
@@ -28,15 +29,18 @@ contract APIConsumer is ChainlinkClient {
      * Job ID: d5270d1c311941d0b08bead21fea7747
      * Fee: 0.1 LINK
      *
+     * LINK token: xa36085F69e2889c224210F603D836748e7dC0088
+     *
      * Rinkeby: 0x7AFe1118Ea78C1eae84ca8feE5C65Bc76CcF879e
      * c8084988f0b54520ba17945c4a2ab7bc
      */
     constructor() {
-        setPublicChainlinkToken();
-        // oracle = 0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8;
-        // jobId = "d5270d1c311941d0b08bead21fea7747";
-        oracle = 0x7AFe1118Ea78C1eae84ca8feE5C65Bc76CcF879e;
-        jobId = "c8084988f0b54520ba17945c4a2ab7bc";
+        // setPublicChainlinkToken();
+        setChainlinkToken(_link);
+        oracle = 0xc57B33452b4F7BB189bB5AfaE9cc4aBa1f7a4FD8;
+        jobId = "d5270d1c311941d0b08bead21fea7747";
+        // oracle = 0x7AFe1118Ea78C1eae84ca8feE5C65Bc76CcF879e;
+        // jobId = "c8084988f0b54520ba17945c4a2ab7bc";
         fee = 0.1 * 10**18; // (Varies by network and job)
     }
 
@@ -52,33 +56,38 @@ contract APIConsumer is ChainlinkClient {
         );
 
         // Set the URL to perform the GET request on
-        // https://hub.snapshot.org/graphql?operationName=Proposals&query=query%20Proposals%20%7B%0A%20%20proposals%20(%0A%20%20%20%20first%3A%2010%2C%0A%20%20%20%20skip%3A%200%2C%0A%20%20%20%20where%3A%20%7B%0A%20%20%20%20%20%20space_in%3A%20%5B%22bdudao.eth%22%2C%20%22carbinocapital.eth%22%5D%2C%0A%20%20%20%20%20%20%23%20space_in%3A%20%5B%22bdudao.eth%22%5D%2C%0A%20%20%20%20%20%20%23%20space_in%3A%20%5B%22enabel.eth%22%5D%2C%0A%20%20%20%20%20%20%23%20state%3A%20%22closed%22%20%23%20todo%3A%20only%20closed%2Ffinished%0A%20%20%20%20%20%20%23%20scores_state_in%3A%20%5B%22final%22%5D%0A%20%20%20%20%20%20type_in%3A%20%5B%22single-choice%22%2C%20%22basic%22%5D%0A%20%20%20%20%20%20%0A%20%20%20%20%7D%2C%0A%20%20%20%20orderBy%3A%20%22created%22%2C%0A%20%20%20%20orderDirection%3A%20desc%0A%20%20)%20%7B%0A%20%20%20%20id%0A%20%20%20%20space%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%7D%0A%20%20%20%20type%0A%20%20%20%20title%0A%20%20%20%20choices%0A%20%20%20%20scores_total%0A%20%20%20%20scores_state%0A%20%20%20%20scores_updated%0A%20%20%20%20scores_by_strategy%0A%20%20%20%20votes%0A%20%20%20%20scores%0A%20%20%7D%0A%7D%0A%0A%0A
-
+        // request.add("get", "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH&tsyms=USD");
         request.add(
             "get",
-            "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=ETH&tsyms=USD"
+            "https://hub.snapshot.org/graphql?operationName=Proposal_&query=query%20Proposal%20%7B%0A%20%20proposal%20(id%3A%220x4f89a6315711350544c14e7c2b13a727f3dbf5936e3fa2f5fd4e851f11267f60%22)%20%7B%0A%20%20%20%20scores%0A%20%20%20%20scores_by_strategy%0A%20%20%20%20scores_state%0A%20%20%20%20scores_total%0A%20%20%20%20scores_updated%0A%20%20%20%20votes%0A%20%20%20%20%0A%20%20%7D%0A%7D%0A%0Aquery%20Proposal_%20%7B%0A%20%20proposal(id%3A%22QmWbpCtwdLzxuLKnMW4Vv4MPFd2pdPX71YBKPasfZxqLUS%22)%20%7B%0A%20%20%20%20id%0A%20%20%20%20title%0A%20%20%20%20%0A%20%20%20%20choices%0A%20%20%20%20start%0A%20%20%20%20end%0A%20%20%20%20snapshot%0A%20%20%20%20state%0A%20%20%20%20author%0A%20%20%20%20votes%0A%20%20%20%20space%20%7B%0A%20%20%20%20%20%20id%0A%20%20%20%20%20%20name%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D"
         );
 
         // Set the path to find the desired data in the API response, where the response format is:
-        // {"RAW":
-        //   {"ETH":
-        //    {"USD":
-        //     {
-        //      "VOLUME24HOUR": xxx.xxx,
-        //     }
-        //    }
-        //   }
-        //  }
+        // {"data":
+        //   {"proposals": [
+        //      {
+        //          ...,
+        //         "scores_total": 3800,
+        //         "scores_by_strategy": [
+        //           [
+        //             100
+        //           ],
+        //           [
+        //             3700
+        //           ],
+        //           [
+        //             0
+        //           ]
+        //         ],
+        //         "votes": 2,
         // request.add("path", "RAW.ETH.USD.VOLUME24HOUR");
-
-        // multi response?
-        request.add("path", "data.proposals.scores");
+        // request.add("path", "data.proposals.scores");
+        request.add("path", "data.proposals.votes");
 
         // Multiply the result by 1000000000000000000 to remove decimals
         int256 timesAmount = 10**18;
-        request.addInt("times", timesAmount);
+        // request.addInt("times", timesAmount);
 
-        // Sends the request
         return sendChainlinkRequestTo(oracle, request, fee);
     }
 
