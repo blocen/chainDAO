@@ -13,6 +13,11 @@
       const hub = 'https://hub.snapshot.org'; // or https://testnet.snapshot.org for testnet
       // const client = new snapshot.Client712(hub);
       const client = new snapshot.Client(hub);
+      async function gs() {
+        const spaces = await client.getSpaces();
+        console.log("spaces: ", spaces);
+      }
+      gs();
       const space = 'yam.eth';
       // const space = 'ens.eth';
       const strategies = [
