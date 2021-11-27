@@ -13,6 +13,7 @@ const customError = (data) => {
 // should be required.
 const customParams = {
   proposal_id: ['proposal_id'],
+  hub: ['hub'],
   endpoint: false
 }
 
@@ -24,11 +25,14 @@ const createRequest = (input, callback) => {
   const jobRunID = validator.validated.id
 
   // const proposal_id = "0xd810c4cf2f09737a6f833f1ec51eaa5504cbc0afeeb883a21a7e1c91c8a597e4"
-  const proposal_id = validator.validated.data.proposal_id
-  const url = `https://hub.snapshot.org/graphql?query=%0A%0Aquery%20Proposal%20%7B%0A%09proposal%20(id%3A%22${proposal_id}%22)%20%7B%0A%09%09votes%0A%20%20%20%20scores%0A%20%20%20%20scores_by_strategy%0A%20%20%20%20scores_state%0A%20%20%20%20scores_total%0A%20%20%20%20scores_updated%0A%20%20%7D%0A%7D%0A`
+  const proposal_id = validator.validated.data.proposal_id;
+  const hub = validator.validated.data.hub;
+
+  const url = `https://${hub}/graphql?query=query%20Proposal%20(%24proposal_id%3AString!)%20%7B%0A%09proposal%20(id%3A%20%24proposal_id)%20%7B%0A%09%09votes%0A%20%20%20%20scores%0A%20%20%20%20scores_by_strategy%0A%20%20%20%20scores_state%0A%20%20%20%20scores_total%0A%20%20%20%20scores_updated%0A%20%20%7D%0A%7D&variables=%7B%0A%20%20%22proposal_id%22%3A%20%22${proposal_id}%22%0A%7D%0A&operationName=Proposal`
 
   const params = {
-    proposal_id
+    proposal_id,
+    hub
   }
 
   // This is where you would add method and headers
@@ -49,8 +53,6 @@ const createRequest = (input, callback) => {
       // result key. This allows different adapters to be compatible with
       // one another.
       // response.data.result = Requester.validateResultNumber(response.data, [tsyms])
-
-      console.log("we got votes:", response)
       callback(response.status, Requester.success(jobRunID, response))
     })
     .catch(error => {
